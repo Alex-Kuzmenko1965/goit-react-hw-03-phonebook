@@ -5,6 +5,7 @@ import { ContactForm } from './components/ContactForm/ContactForm';
 import { ContactList } from './components/ContactList/ContactList';
 import { Filter } from './components/Filter/Filter';
 
+const LS_CONTACTS = 'contacts';
 export default class App extends Component {
   state = {
     contacts: [
@@ -16,10 +17,27 @@ export default class App extends Component {
     filter: ''    
   }
 
+  componentDidMount() {
+    if (!localStorage.getItem(LS_CONTACTS)) {
+      const emptyArray = {
+        contacts: [],
+      };
+      localStorage.setItem(LS_CONTACTS, JSON.stringify(emptyArray));
+    } else {localStorage.setItem(LS_CONTACTS, JSON.stringify(this.state.contacts));}
+  
+  }
+
+  componentDidUpdate(_, prevState) {
+    if (prevState.contacts.length !== this.state.contacts.length ) {
+      localStorage.setItem(LS_CONTACTS, JSON.stringify(this.state.contacts));
+    }
+  }
+
   handleSubmit = ({ name, number }) => {    
     const contactId = nanoid();       
     const contacts = this.state.contacts;
     console.log(contacts);
+    
     const isName = contacts.find(contact => contact.name === name);
     console.log(isName);
     if (isName) {
@@ -27,7 +45,7 @@ export default class App extends Component {
       return;
     } else {
       const contact = { id: contactId, name: name, number: number};
-      console.log(contact);
+      console.log(contact);      
       this.setState((prevState) => ({contacts: [...prevState.contacts, contact] }));      
     };   
   };
