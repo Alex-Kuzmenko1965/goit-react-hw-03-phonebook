@@ -18,17 +18,23 @@ export default class App extends Component {
   }
 
   componentDidMount() {
+    const contacts = this.state.contacts;
+
     if (!localStorage.getItem(LS_CONTACTS)) {
-      const emptyArray = {
-        contacts: [],
-      };
-      localStorage.setItem(LS_CONTACTS, JSON.stringify(emptyArray));
-    } else {localStorage.setItem(LS_CONTACTS, JSON.stringify(this.state.contacts));}
-  
+      // const emptyArray = {
+      //   contacts: [],
+      // };
+      // localStorage.setItem(LS_CONTACTS, JSON.stringify(emptyArray));
+      localStorage.setItem(LS_CONTACTS, JSON.stringify(contacts));
+    } else {      
+      const settingContacts = JSON.parse(localStorage.getItem(LS_CONTACTS));
+      // console.log(settingContacts);
+      this.setState({ contacts: settingContacts });
+    }  
   }
 
   componentDidUpdate(_, prevState) {
-    if (prevState.contacts.length !== this.state.contacts.length ) {
+    if (prevState.contacts.length !== this.state.contacts.length) {
       localStorage.setItem(LS_CONTACTS, JSON.stringify(this.state.contacts));
     }
   }
@@ -36,10 +42,7 @@ export default class App extends Component {
   handleSubmit = ({ name, number }) => {    
     const contactId = nanoid();       
     const contacts = this.state.contacts;
-    console.log(contacts);
-    
     const isName = contacts.find(contact => contact.name === name);
-    console.log(isName);
     if (isName) {
       alert(`${name} is already in contact`);
       return;
@@ -63,7 +66,7 @@ export default class App extends Component {
 
   getFilteredContacts = () => {    
     if (!this.state.filter) {
-      return this.state.contacts;      
+      return this.state.contacts;
     } else {
       const filter = this.state.filter;    
       const normalizedFilter = filter.toLowerCase();
