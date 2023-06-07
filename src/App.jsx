@@ -18,19 +18,12 @@ export default class App extends Component {
   }
 
   componentDidMount() {
-    const contacts = this.state.contacts;
+    const saveContacts = localStorage.getItem(LS_CONTACTS);
 
-    if (!localStorage.getItem(LS_CONTACTS)) {
-      // const emptyArray = {
-      //   contacts: [],
-      // };
-      // localStorage.setItem(LS_CONTACTS, JSON.stringify(emptyArray));
-      localStorage.setItem(LS_CONTACTS, JSON.stringify(contacts));
-    } else {      
-      const settingContacts = JSON.parse(localStorage.getItem(LS_CONTACTS));
-      // console.log(settingContacts);
+    if (saveContacts) {
+      const settingContacts = JSON.parse(saveContacts);
       this.setState({ contacts: settingContacts });
-    }  
+    }
   }
 
   componentDidUpdate(_, prevState) {
@@ -46,11 +39,9 @@ export default class App extends Component {
     if (isName) {
       alert(`${name} is already in contact`);
       return;
-    } else {
-      const contact = { id: contactId, name: name, number: number};
-      console.log(contact);      
-      this.setState((prevState) => ({contacts: [...prevState.contacts, contact] }));      
-    };   
+    }
+    const contact = { id: contactId, name: name, number: number};            
+    this.setState((prevState) => ({contacts: [...prevState.contacts, contact] }));   
   };
     
   deleteContact = contactId => {    
@@ -65,14 +56,10 @@ export default class App extends Component {
   }
 
   getFilteredContacts = () => {    
-    if (!this.state.filter) {
-      return this.state.contacts;
-    } else {
-      const filter = this.state.filter;    
-      const normalizedFilter = filter.toLowerCase();
-      return this.state.contacts.filter((contact) =>
-      contact.name.toLowerCase().includes(normalizedFilter));      
-    }
+    const filter = this.state.filter;    
+    const normalizedFilter = filter.toLowerCase();
+    return this.state.contacts.filter((contact) =>
+    contact.name.toLowerCase().includes(normalizedFilter));      
   }
 
   render() {
